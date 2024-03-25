@@ -59,6 +59,16 @@ class S {
       args: [],
     );
   }
+
+  /// `You have pushed the button this many times:`
+  String get counterText {
+    return Intl.message(
+      'You have pushed the button this many times:',
+      name: 'counterText',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
@@ -67,8 +77,6 @@ class AppLocalizationDelegate extends LocalizationsDelegate<S> {
   List<Locale> get supportedLocales {
     return const <Locale>[
       Locale.fromSubtags(languageCode: 'en'),
-      Locale.fromSubtags(languageCode: 'es'),
-      Locale.fromSubtags(languageCode: 'my'),
     ];
   }
 

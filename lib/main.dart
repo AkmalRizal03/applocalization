@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider<LocaleProvider>(
+    create: (context) => LocaleProvider(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -12,6 +17,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context);
+
     return MaterialApp(
       title: 'Flutter Demo',
       localizationsDelegates: const [
@@ -44,10 +51,24 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
+      locale: localeProvider.locale, // Set locale from provider
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
+
+class LocaleProvider extends ChangeNotifier {
+  Locale _locale = const Locale('en'); // Default to English (US)
+
+  Locale get locale => _locale;
+
+  void setLocale(Locale newLocale) {
+    _locale = newLocale;
+    notifyListeners();
+  }
+}
+
+
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -80,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
       _counter++;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -123,6 +145,8 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const SizedBox(height: 20),
+            const LocaleSelector(), // Locale selector widget.
           ],
         ),
       ),
@@ -131,6 +155,35 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+class LocaleSelector extends StatelessWidget {
+  const LocaleSelector({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final localeProvider = Provider.of<LocaleProvider>(context);
+
+    return DropdownButton<Locale>(
+      value: localeProvider.locale,
+      onChanged: (newLocale) {
+        localeProvider.setLocale(newLocale!);
+      },
+      items: const [
+        DropdownMenuItem(
+          value: Locale('en'),
+          child: Text('English'),
+        ),
+        DropdownMenuItem(
+          value: Locale('es'),
+          child: Text('Spanish'),
+        ),
+        DropdownMenuItem(
+          value: Locale('ms'),
+          child: Text('Malay'),
+        ),
+      ],
     );
   }
 }
